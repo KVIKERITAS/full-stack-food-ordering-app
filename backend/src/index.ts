@@ -20,7 +20,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-app.get('/', async (req: Request, res: Response) => {
+app.get('/health', async (req: Request, res: Response) => {
 	res.send({ message: 'OK!' })
 })
 
