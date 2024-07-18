@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Search } from 'lucide-react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from './ui/button'
@@ -20,15 +21,20 @@ type Props = {
 	onSubmit: (formData: SearchForm) => void
 	placeholder: string
 	onReset?: () => void
+	searchQuery?: string
 }
 
-const SearchBar = ({ onSubmit, placeholder, onReset }: Props) => {
+const SearchBar = ({ onSubmit, placeholder, onReset, searchQuery }: Props) => {
 	const form = useForm<SearchForm>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			searchQuery: '',
+			searchQuery,
 		},
 	})
+
+	useEffect(() => {
+		form.reset({ searchQuery })
+	}, [form, searchQuery])
 
 	const handleReset = () => {
 		form.reset({
@@ -42,7 +48,7 @@ const SearchBar = ({ onSubmit, placeholder, onReset }: Props) => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className={`flex items-center flex-1 gap-3 justify-between flex-row border-2 p-3 mx-5 rounded-lg ${
+				className={`flex items-center gap-3 justify-between flex-row border-2 p-3 rounded-lg ${
 					form.formState.errors.searchQuery && 'border-red-500'
 				}`}
 			>
@@ -66,11 +72,9 @@ const SearchBar = ({ onSubmit, placeholder, onReset }: Props) => {
 						</FormItem>
 					)}
 				/>
-				{form.formState.isDirty && (
-					<Button onClick={handleReset} type='button' variant='outline'>
-						Clear
-					</Button>
-				)}
+				<Button onClick={handleReset} type='button' variant='outline'>
+					Reset
+				</Button>
 				<Button type='submit' className='bg-red-500'>
 					Search
 				</Button>
